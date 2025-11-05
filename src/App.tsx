@@ -7,7 +7,7 @@ const client = generateClient<Schema>();
 
 function App() {
   const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
-  const { signOut, user } = useAuthenticator((context) => [context.user]);
+  const { user, signOut } = useAuthenticator((context) => [context.user]);
 
   useEffect(() => {
     const sub = client.models.Todo.observeQuery().subscribe({
@@ -29,10 +29,22 @@ function App() {
 
   return (
     <main className="p-4">
-      <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-        <h1>My todos</h1>
+      <header
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 16,
+        }}
+      >
+        {/* ✅ mostra o loginId (ex: email ou username) do usuário autenticado */}
+        <h1>{user?.signInDetails?.loginId}'s todos</h1>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          {user?.username && <span>Signed in as <strong>{user.username}</strong></span>}
+          {user?.username && (
+            <span>
+              Signed in as <strong>{user.username}</strong>
+            </span>
+          )}
           <button onClick={signOut}>Sign out</button>
         </div>
       </header>
@@ -43,7 +55,10 @@ function App() {
         {todos.map((todo) => (
           <li key={todo.id}>
             {todo.content}
-            <button onClick={() => deleteTodo(todo.id)} style={{ marginLeft: 8 }}>
+            <button
+              onClick={() => deleteTodo(todo.id)}
+              style={{ marginLeft: 8 }}
+            >
               Delete
             </button>
           </li>
